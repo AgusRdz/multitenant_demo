@@ -1,0 +1,49 @@
+{
+  "name": "multitenant",
+  "version": "1.0.0",
+  "description": "example multitenant using nodejs and postgresql",
+  "main": "index.js",
+  "author": "Agustin Espinoza",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon ./src/index.js"
+  },
+  "dependencies": {
+    "bull": "^3.20.0",
+    "continuation-local-storage": "^3.2.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-response-formatter": "^2.0.2",
+    "express-sanitizer": "^1.0.5",
+    "faker": "^5.1.0",
+    "generate-password": "^1.6.0",
+    "joi": "^17.3.0",
+    "knex": "^0.21.16",
+    "pg": "^8.5.1",
+    "redis": "^3.0.2",
+    "slugify": "^1.4.6",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^5.0.0",
+    "husky": "^4.3.8",
+    "lint-staged": "^10.5.3",
+    "nodemon": "^2.0.7",
+    "prettier": "^2.2.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix"
+  }
+}
