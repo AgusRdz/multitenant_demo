@@ -24,6 +24,11 @@ I selected the separate databases as database approach because I think is easier
 
 I going to focus on the specific files required to do the multi tenancy workflow.
 
+- your "root" or "admin" user needs to be granted access to all databases to avod issues in the creation step, something like this:
+  ```sql
+  GRANT ALL PRIVILEGES ON * . * TO 'admin'@'localhost';
+  FLUSH PRIVILEGES;
+  ```
 - create the common database to manage the tenants:
 
 ```sql
@@ -123,11 +128,14 @@ const up = async (params) => {
   job.add({ ...params })
   job.process(async (job, done) => {
     try {
-      await db.raw(`CREATE ROLE ${params.tenantName} WITH LOGIN;`) // Postgres requires a role or user for each tenant
       await db.raw(
-        `GRANT ${params.tenantName} TO ${process.env.POSTGRES_ROLE};`
-      ) // you need provide permissions to your admin role in order to allow the database administration
-      await db.raw(`CREATE DATABASE ${params.tenantName};`)
+        `CREATE USER '${params.tenantName}'@'${process.env.DB_HOST}' IDENTIFIED BY '${params.password}';`
+      ) // Create a new MySQL user for the new tenant
+      await db.raw(`CREATE DATABASE ${params.tenantName};`) // create the new tenant database as admin
+      await db.raw(
+        `GRANT ALL PRIVILEGES ON ${params.tenantName}.* TO '${params.tenantName}'@'${process.env.DB_HOST}';`
+      ) // you need provide permissions to the new user to only access to their database
+      await db.raw('FLUSH PRIVILEGES;') //reload permissions
       await db.raw(
         `GRANT ALL PRIVILEGES ON DATABASE ${params.tenantName} TO ${params.tenantName};`
       )
