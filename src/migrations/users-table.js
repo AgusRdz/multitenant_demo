@@ -5,8 +5,8 @@ const usersTable = async (tenant) => {
     table.string('first_name')
     table.string('last_name')
     table.string('password')
-    table.integer('role_id')
-    table.timestamps()
+    table.specificType('role_id', 'int(10) unsigned')
+    table.timestamps(true, true)
     table.foreign('role_id').references('id').inTable('roles')
   })
 }

@@ -14,15 +14,14 @@ const up = async (params) => {
   })
   job.process(async (job, done) => {
     try {
-      await db.raw(`CREATE ROLE ${params.tenantName} WITH LOGIN;`)
       await db.raw(
-        `GRANT ${params.tenantName} TO ${process.env.POSTGRES_ROLE};`
+        `CREATE USER '${params.tenantName}'@'${process.env.DB_HOST}' IDENTIFIED BY '${params.password}';`
       )
       await db.raw(`CREATE DATABASE ${params.tenantName};`)
       await db.raw(
-        `GRANT ALL PRIVILEGES ON DATABASE ${params.tenantName} TO ${params.tenantName};`
+        `GRANT ALL PRIVILEGES ON ${params.tenantName}.* TO '${params.tenantName}'@'${process.env.DB_HOST}';`
       )
-
+      await db.raw('FLUSH PRIVILEGES;')
       await bootstrap()
       const tenant = getTenantConnection(params.uuid)
       await migrate(tenant)
